@@ -1,5 +1,9 @@
+node_modules/
 *.url
 *.ink
 desktop.ini
 Thumbs.db
 .DS_Store
+dist/
+build/
+.env

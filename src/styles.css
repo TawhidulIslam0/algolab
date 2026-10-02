@@ -1709,3 +1709,485 @@ button {
   color: #f4f1f7;
   background: rgba(255,255,255,.05);
 }
+
+
+/* Light theme: persisted by App through document.documentElement.dataset.theme. */
+:root[data-theme='light'] {
+  color-scheme: light;
+  --bg: #f5f7fb;
+  --surface: #ffffff;
+  --surface-2: #f0f2f7;
+  --surface-3: #e8ebf2;
+  --border: #d9dde7;
+  --border-soft: #e7e9ef;
+  --text: #171923;
+  --muted: #626979;
+  --muted-2: #8a90a0;
+  --accent: #6d50d9;
+  --accent-strong: #6245cf;
+  --accent-soft: rgba(109, 80, 217, 0.10);
+  --green: #20895c;
+  --blue: #3179c7;
+  --orange: #b86c1d;
+  --red: #c7475e;
+}
+
+:root[data-theme='light'] .site-shell {
+  background: radial-gradient(circle at 70% 0%, rgba(109, 80, 217, 0.08), transparent 30%), var(--bg);
+}
+
+:root[data-theme='light'] .site-header {
+  background: rgba(245, 247, 251, 0.88);
+}
+
+:root[data-theme='light'] .sidebar-panel,
+:root[data-theme='light'] .visualizer-card,
+:root[data-theme='light'] .lesson-card,
+:root[data-theme='light'] .detail-card,
+:root[data-theme='light'] .metric,
+:root[data-theme='light'] .module-summary {
+  background: var(--surface);
+}
+
+:root[data-theme='light'] .sidebar-search,
+:root[data-theme='light'] .code-window,
+:root[data-theme='light'] .code-window-bar,
+:root[data-theme='light'] .stage-shell,
+:root[data-theme='light'] .concept-stage {
+  background: #f8f9fc;
+}
+
+:root[data-theme='light'] .code-window {
+  border-color: var(--border);
+}
+
+:root[data-theme='light'] .code-window-bar {
+  border-bottom-color: var(--border);
+}
+
+:root[data-theme='light'] .sidebar-topic:hover,
+:root[data-theme='light'] .sidebar-topic.active,
+:root[data-theme='light'] .header-nav a:hover,
+:root[data-theme='light'] .header-nav a.active,
+:root[data-theme='light'] .header-actions button:hover,
+:root[data-theme='light'] .mobile-menu:hover,
+:root[data-theme='light'] .icon-button:hover {
+  background: var(--surface-2);
+}
+
+.copy-code {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 8px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: var(--surface-2);
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.copy-code:hover {
+  color: var(--text);
+}
+
+.pseudocode-card {
+  min-width: 0;
+}
+
+.pseudocode-list {
+  margin-top: 18px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface-2);
+}
+
+.pseudo-line {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  align-items: start;
+  min-height: 34px;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.pseudo-line:last-child {
+  border-bottom: 0;
+}
+
+.pseudo-line > span {
+  padding: 8px 10px;
+  color: var(--muted-2);
+  font: 10px/1.5 'DM Mono', monospace;
+  text-align: right;
+}
+
+.pseudo-line code {
+  padding: 8px 10px;
+  color: var(--text);
+  font: 11px/1.5 'DM Mono', monospace;
+  white-space: pre-wrap;
+}
+
+.complexity-four {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.complexity-four > div {
+  min-width: 0;
+}
+
+.operation-note,
+.complexity-note {
+  margin: 14px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.65;
+}
+
+.operation-note strong {
+  color: var(--text);
+}
+
+@media (max-width: 850px) {
+  .complexity-four {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.theme-toggle {
+  position: relative;
+}
+
+/* --------------------------------------------------------------------------
+   Light theme: intentionally bright, high-contrast, and paper-like.
+   Nothing in the learning workspace should remain a dark panel in light mode.
+   -------------------------------------------------------------------------- */
+:root[data-theme='light'] body,
+:root[data-theme='light'] .site-shell,
+:root[data-theme='light'] .content,
+:root[data-theme='light'] .page-layout {
+  background: #ffffff;
+  color: #111318;
+}
+
+:root[data-theme='light'] .site-header {
+  background: rgba(255, 255, 255, 0.96);
+  border-bottom-color: #dfe3ea;
+}
+
+:root[data-theme='light'] .header-logo,
+:root[data-theme='light'] .header-actions button,
+:root[data-theme='light'] .mobile-menu,
+:root[data-theme='light'] .icon-button {
+  background: #ffffff;
+  color: #20242c;
+  border-color: #d7dce5;
+}
+
+:root[data-theme='light'] .header-nav a,
+:root[data-theme='light'] .header-actions button,
+:root[data-theme='light'] .mobile-menu {
+  color: #505764;
+}
+
+:root[data-theme='light'] .header-nav a:hover,
+:root[data-theme='light'] .header-nav a.active,
+:root[data-theme='light'] .header-actions button:hover,
+:root[data-theme='light'] .mobile-menu:hover {
+  color: #111318;
+  background: #f1f3f7;
+}
+
+:root[data-theme='light'] .sidebar-panel,
+:root[data-theme='light'] .sidebar-search,
+:root[data-theme='light'] .visualizer-card,
+:root[data-theme='light'] .lesson-card,
+:root[data-theme='light'] .detail-card,
+:root[data-theme='light'] .metric,
+:root[data-theme='light'] .module-summary,
+:root[data-theme='light'] .mobile-search {
+  background: #ffffff;
+  color: #111318;
+  border-color: #d9dee7;
+}
+
+:root[data-theme='light'] .sidebar-brand,
+:root[data-theme='light'] .visualizer-header,
+:root[data-theme='light'] .code-heading,
+:root[data-theme='light'] .trace-status,
+:root[data-theme='light'] .operation-bar,
+:root[data-theme='light'] .control-panel,
+:root[data-theme='light'] .trace-controls,
+:root[data-theme='light'] .code-window-bar {
+  background: #ffffff;
+  border-color: #e2e6ed;
+}
+
+:root[data-theme='light'] .sidebar-search {
+  color: #6a7280;
+}
+
+:root[data-theme='light'] .sidebar-search input,
+:root[data-theme='light'] .mobile-search input,
+:root[data-theme='light'] .control-panel input {
+  color: #111318;
+  background: #ffffff;
+}
+
+:root[data-theme='light'] .sidebar-topic {
+  color: #3f4652;
+}
+
+:root[data-theme='light'] .sidebar-topic:hover {
+  color: #111318;
+  background: #f1f3f7;
+}
+
+:root[data-theme='light'] .sidebar-topic.active {
+  color: #111318;
+  background: #eeeafd;
+}
+
+:root[data-theme='light'] .sidebar-category-title,
+:root[data-theme='light'] .sidebar-section-title {
+  color: #303640;
+}
+
+:root[data-theme='light'] .sidebar-category-title b,
+:root[data-theme='light'] .sidebar-section-title,
+:root[data-theme='light'] .sidebar-footer,
+:root[data-theme='light'] .sidebar-footer strong {
+  color: #707887;
+}
+
+:root[data-theme='light'] .sidebar-topic:hover .topic-dot {
+  background: #6d50d9;
+}
+
+:root[data-theme='light'] .module-path,
+:root[data-theme='light'] .breadcrumb,
+:root[data-theme='light'] .breadcrumb span,
+:root[data-theme='light'] .stage-label,
+:root[data-theme='light'] .array-index,
+:root[data-theme='light'] .array-pointer,
+:root[data-theme='light'] .pointer-label,
+:root[data-theme='light'] .visit-order,
+:root[data-theme='light'] .step-counter {
+  color: #697180;
+}
+
+:root[data-theme='light'] .visualizer-header h3,
+:root[data-theme='light'] .visualizer-page-heading h1,
+:root[data-theme='light'] .module-topline h2,
+:root[data-theme='light'] .lesson-heading h2,
+:root[data-theme='light'] .explanation-card h3,
+:root[data-theme='light'] .detail-card h3,
+:root[data-theme='light'] .concept-summary h4,
+:root[data-theme='light'] .module-summary strong,
+:root[data-theme='light'] .lesson-step p,
+:root[data-theme='light'] .metric strong,
+:root[data-theme='light'] .visit-order strong {
+  color: #111318;
+}
+
+:root[data-theme='light'] .visualizer-header p,
+:root[data-theme='light'] .visualizer-page-heading p,
+:root[data-theme='light'] .section-heading p,
+:root[data-theme='light'] .lesson-heading p,
+:root[data-theme='light'] .explanation-card > p,
+:root[data-theme='light'] .detail-card > p,
+:root[data-theme='light'] .concept-summary p {
+  color: #4d5562;
+}
+
+:root[data-theme='light'] .control-panel input,
+:root[data-theme='light'] .speed-control select {
+  border-color: #d4d9e2;
+  background: #ffffff;
+  color: #171a20;
+}
+
+:root[data-theme='light'] .secondary-button,
+:root[data-theme='light'] .transport button,
+:root[data-theme='light'] .speed-control select {
+  background: #f5f6f8;
+  color: #242932;
+  border-color: #d4d9e2;
+}
+
+:root[data-theme='light'] .secondary-button:hover,
+:root[data-theme='light'] .transport button:hover {
+  background: #eceff4;
+  color: #111318;
+}
+
+:root[data-theme='light'] .visual-stage,
+:root[data-theme='light'] .structure-stage,
+:root[data-theme='light'] .linked-stage,
+:root[data-theme='light'] .tree-stage,
+:root[data-theme='light'] .graph-stage,
+:root[data-theme='light'] .concept-stage {
+  background:
+    linear-gradient(rgba(17, 19, 24, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(17, 19, 24, 0.045) 1px, transparent 1px),
+    #ffffff;
+  background-size: 28px 28px;
+}
+
+:root[data-theme='light'] .array-value,
+:root[data-theme='light'] .structure-cell,
+:root[data-theme='light'] .linked-node,
+:root[data-theme='light'] .tree-node,
+:root[data-theme='light'] .graph-node,
+:root[data-theme='light'] .model-cell {
+  background: #ffffff;
+  color: #111318;
+  border-color: #cfd5df;
+}
+
+:root[data-theme='light'] .array-value.active,
+:root[data-theme='light'] .tree-node.active,
+:root[data-theme='light'] .tree-node:hover,
+:root[data-theme='light'] .linked-node.selected,
+:root[data-theme='light'] .linked-node:hover,
+:root[data-theme='light'] .model-cell.active {
+  background: #f0edff;
+  color: #111318;
+  border-color: #8068dc;
+}
+
+:root[data-theme='light'] .array-value.sorted,
+:root[data-theme='light'] .graph-node.visited {
+  background: #eefaf4;
+  color: #163b2a;
+  border-color: #6cb995;
+}
+
+:root[data-theme='light'] .tree-lines line,
+:root[data-theme='light'] .graph-stage line {
+  stroke: #aab1bd;
+}
+
+:root[data-theme='light'] .trace-progress {
+  background: #e1e5eb;
+}
+
+:root[data-theme='light'] .trace-status div {
+  background: #f7f8fa;
+  border-color: #e0e4ea;
+}
+
+:root[data-theme='light'] .trace-status strong,
+:root[data-theme='light'] .structure-cell,
+:root[data-theme='light'] .linked-node strong {
+  color: #111318;
+}
+
+:root[data-theme='light'] .trace-status span,
+:root[data-theme='light'] .structure-cell span,
+:root[data-theme='light'] .linked-node span,
+:root[data-theme='light'] .concept-controls label span,
+:root[data-theme='light'] .model-cell span {
+  color: #697180;
+}
+
+:root[data-theme='light'] .model-cell {
+  background: #ffffff;
+}
+
+:root[data-theme='light'] .lesson-step {
+  border-bottom-color: #e3e6ec;
+}
+
+:root[data-theme='light'] .lesson-step > span,
+:root[data-theme='light'] .card-kicker,
+:root[data-theme='light'] .eyebrow {
+  color: #6245cf;
+}
+
+:root[data-theme='light'] .implementation-card,
+:root[data-theme='light'] .code-window,
+:root[data-theme='light'] .code-window-bar,
+:root[data-theme='light'] .complexity-row div {
+  background: #ffffff;
+}
+
+:root[data-theme='light'] .code-window {
+  border-top: 0;
+}
+
+:root[data-theme='light'] .code-window code {
+  color: #171a20;
+}
+
+:root[data-theme='light'] .line-number {
+  color: #8a919e;
+}
+
+:root[data-theme='light'] .code-line:hover {
+  background: #f3f1fb;
+}
+
+:root[data-theme='light'] .language-tabs button {
+  color: #596170;
+}
+
+:root[data-theme='light'] .language-tabs button:hover {
+  color: #111318;
+  background: #f1f3f7;
+}
+
+:root[data-theme='light'] .language-tabs button.selected {
+  color: #4e39a8;
+  background: #eeeafd;
+  border-color: #cfc5f4;
+}
+
+:root[data-theme='light'] .code-window-bar,
+:root[data-theme='light'] .code-window-bar .copy-code {
+  color: #626a77;
+}
+
+:root[data-theme='light'] .code-window-bar .copy-code:hover {
+  color: #111318;
+  background: #f1f3f7;
+}
+
+:root[data-theme='light'] .complexity-row div {
+  background: #ffffff;
+  border-color: #e0e4ea;
+}
+
+:root[data-theme='light'] .complexity-row span {
+  color: #707887;
+}
+
+:root[data-theme='light'] .complexity-row strong {
+  color: #6245cf;
+}
+
+:root[data-theme='light'] .tag-list span {
+  background: #ffffff;
+  color: #505864;
+  border-color: #d8dde6;
+}
+
+:root[data-theme='light'] .site-footer {
+  background: #ffffff;
+  border-top-color: #dfe3ea;
+  color: #5d6572;
+}
+
+:root[data-theme='light'] .mobile-backdrop.show {
+  background: rgba(17, 19, 24, 0.24);
+}
+.metrics { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+@media (max-width: 820px) {
+  .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 600px) {
+  .metrics { grid-template-columns: 1fr; }
+}

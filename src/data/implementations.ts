@@ -159,15 +159,7 @@ const structures: Record<string, CodeMap> = {
   },
 };
 
-const generic: CodeMap = {
-  TypeScript: lines('function solve(input: number[]): number[] {', '  // Keep the algorithm state explicit.', '  // Update the state according to the rule above.', '  return input;', '}'),
-  JavaScript: lines('function solve(input) {', '  // Keep the algorithm state explicit.', '  // Update the state according to the rule above.', '  return input;', '}'),
-  Python: lines('def solve(input):', '    # Keep the algorithm state explicit.', '    # Update the state according to the rule above.', '    return input'),
-  Java: lines('static int[] solve(int[] input) {', '    // Keep the algorithm state explicit.', '    // Update the state according to the rule above.', '    return input;', '}'),
-  'C++': lines('vector<int> solve(vector<int> input) {', '    // Keep the algorithm state explicit.', '    // Update the state according to the rule above.', '    return input;', '}'),
-};
-
-export function getImplementation(topic: { title: string; id: string }): CodeMap {
+export function getImplementation(topic: { title: string; id: string }): CodeMap | null {
   if (sortCode[topic.title]) return sortCode[topic.title];
   if (searchCode[topic.title]) return searchCode[topic.title];
   if (structures[topic.title]) return structures[topic.title];
@@ -207,5 +199,5 @@ export function getImplementation(topic: { title: string; id: string }): CodeMap
     };
   }
 
-  return generic;
+  return null;
 }

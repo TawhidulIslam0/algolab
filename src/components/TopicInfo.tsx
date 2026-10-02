@@ -2,14 +2,18 @@ import { useMemo, useState } from 'react';
 import { BookOpen, CheckCircle2, Clock3, Code2, Copy, Check, Lightbulb, Layers3 } from 'lucide-react';
 import type { Topic } from '../data/topics';
 import { getImplementation, languages, type Language } from '../data/implementations';
+import { getComplexity } from '../data/complexity';
 
 export default function TopicInfo({ topic }: { topic: Topic }) {
   const [language, setLanguage] = useState<Language>('TypeScript');
   const [copied, setCopied] = useState(false);
   const implementations = useMemo(() => getImplementation(topic), [topic]);
-  const currentCode = implementations[language];
+  const currentCode = implementations?.[language] ?? null;
+  const hasImplementation = Boolean(implementations);
+  const complexity = useMemo(() => getComplexity(topic), [topic]);
 
   const copyCode = async () => {
+    if (!currentCode) return;
     await navigator.clipboard?.writeText(currentCode.join('\n'));
     setCopied(true);
     window.setTimeout(() => setCopied(false), 1400);
@@ -31,9 +35,10 @@ export default function TopicInfo({ topic }: { topic: Topic }) {
       </div>
 
       <div className="metrics">
-        <Metric icon={<Clock3 />} label="Time Complexity" value={topic.time} />
-        <Metric icon={<Layers3 />} label="Space Complexity" value={topic.space} />
-        <Metric icon={<BookOpen />} label="Category" value={topic.category} />
+        <Metric icon={<Clock3 />} label="Best Time" value={complexity.best} />
+        <Metric icon={<Clock3 />} label="Average Time" value={complexity.average} />
+        <Metric icon={<Clock3 />} label="Worst Time" value={complexity.worst} />
+        <Metric icon={<Layers3 />} label="Space" value={complexity.space} />
       </div>
 
       <div className="lesson-grid">
@@ -41,12 +46,12 @@ export default function TopicInfo({ topic }: { topic: Topic }) {
           <div className="card-kicker">
             <Lightbulb size={15} /> HOW IT WORKS
           </div>
-          <h3>Build the mental model first.</h3>
+          <h3>How to solve it, step by step.</h3>
           <p>{topic.explanation}</p>
 
           <div className="step-list">
             {topic.steps.map((step, index) => (
-              <div className="lesson-step" key={step}>
+              <div className="lesson-step" key={`${topic.id}-${index}`}>
                 <span>{String(index + 1).padStart(2, '0')}</span>
                 <p>{step}</p>
               </div>
@@ -54,7 +59,7 @@ export default function TopicInfo({ topic }: { topic: Topic }) {
           </div>
         </article>
 
-        <article className="lesson-card implementation-card">
+        {hasImplementation && currentCode && <article className="lesson-card implementation-card">
           <div className="code-heading">
             <div className="card-kicker">
               <Code2 size={15} /> IMPLEMENTATION
@@ -76,8 +81,8 @@ export default function TopicInfo({ topic }: { topic: Topic }) {
 
           <div className="code-window">
             <div className="code-window-bar">
-              <span>algorithm.ts</span>
-              <span>Readable example</span>
+              <span>{topic.title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.{language === 'Python' ? 'py' : language === 'Java' ? 'java' : language === 'C++' ? 'cpp' : language === 'TypeScript' ? 'ts' : 'js'}</span>
+              <button className="copy-code" onClick={copyCode}>{copied ? <Check size={13} /> : <Copy size={13} />} {copied ? 'Copied' : 'Copy'}</button>
             </div>
             <pre>
               <code>
@@ -90,7 +95,7 @@ export default function TopicInfo({ topic }: { topic: Topic }) {
               </code>
             </pre>
           </div>
-        </article>
+        </article>}
       </div>
 
       <div className="lesson-bottom-grid">
@@ -98,19 +103,15 @@ export default function TopicInfo({ topic }: { topic: Topic }) {
           <div className="card-kicker">
             <CheckCircle2 size={15} /> COMPLEXITY
           </div>
-          <div className="complexity-row">
-            <div>
-              <span>Time</span>
-              <strong>{topic.time}</strong>
-            </div>
-            <div>
-              <span>Space</span>
-              <strong>{topic.space}</strong>
-            </div>
+          <div className="complexity-row complexity-four">
+            <div><span>Best</span><strong>{complexity.best}</strong></div>
+            <div><span>Average</span><strong>{complexity.average}</strong></div>
+            <div><span>Worst</span><strong>{complexity.worst}</strong></div>
+            <div><span>Space</span><strong>{complexity.space}</strong></div>
           </div>
-          <p>
-            Complexity describes how the amount of work or memory changes as the input grows. Use the visualization to see why the cost changes.
-          </p>
+          {complexity.operation && <p className="operation-note"><strong>Operations:</strong> {complexity.operation}</p>}
+          {complexity.note && <p className="complexity-note">{complexity.note}</p>}
+          <p>Complexity describes how the amount of work or memory changes as the input grows. The best, average, and worst cases are shown separately whenever the algorithm has meaningful case differences.</p>
         </article>
 
         <article className="detail-card">

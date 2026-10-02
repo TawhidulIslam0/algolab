@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react';
-import { Github, Menu, Moon, Search, Sparkles, X } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
+import { Menu, Moon, Sun, Search, Sparkles, X } from 'lucide-react';
 import Sidebar from './components/Sidebar';
 import Visualizer from './components/Visualizer';
 import TopicInfo from './components/TopicInfo';
@@ -10,6 +10,16 @@ export default function App() {
   const [selectedId, setSelectedId] = useState('bubble-sort');
   const [query, setQuery] = useState('');
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [theme, setTheme] = useState<'dark' | 'light'>(() => {
+    const saved = window.localStorage.getItem('algolab-theme');
+    if (saved === 'light' || saved === 'dark') return saved;
+    return window.matchMedia?.('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+  });
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    window.localStorage.setItem('algolab-theme', theme);
+  }, [theme]);
 
   const selected = useMemo<Topic>(() => {
     return topics.find(topic => topic.id === selectedId) ?? topics[0];
@@ -38,11 +48,12 @@ export default function App() {
         </nav>
 
         <div className="header-actions">
-          <a href="https://github.com/" target="_blank" rel="noreferrer" aria-label="GitHub">
-            <Github size={17} />
-          </a>
-          <button aria-label="Theme">
-            <Moon size={17} />
+          <button
+            aria-label={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
+            title={theme === 'dark' ? 'Light theme' : 'Dark theme'}
+            onClick={() => setTheme(current => current === 'dark' ? 'light' : 'dark')}
+          >
+            {theme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
           </button>
         </div>
 

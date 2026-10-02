@@ -26,6 +26,8 @@ export type Topic = {
   code: string[];
 };
 
+import { getLearningSteps } from './steps';
+
 const code = (...lines: string[]) => lines;
 
 const makeTopic = (
@@ -45,26 +47,13 @@ const makeTopic = (
   explanation:
     options.explanation ??
     `${description} Use the controls above to change the state, step through the operation, and connect each visual change to the implementation.`,
-  steps:
-    options.steps ?? [
-      'Initialize the data structure or input.',
-      'Identify the current element, pointer, or decision.',
-      'Apply the operation and update the state.',
-      'Repeat until the stopping condition is reached.',
-    ],
+  steps: options.steps ?? getLearningSteps({ id, title, category, section, description, kind } as Topic),
   difficulty: options.difficulty ?? 'Beginner',
   time: options.time ?? 'O(n)',
   space: options.space ?? 'O(n)',
   tags: options.tags ?? [category.toLowerCase(), section.toLowerCase()],
   kind,
-  code: options.code ?? code(
-    `// ${title}`,
-    'function solve(input: number[]) {',
-    '  // Keep the important state explicit.',
-    '  // The visualizer above follows these operations.',
-    '  return input;',
-    '}',
-  ),
+  code: options.code ?? [],
 });
 
 export const topics: Topic[] = [

@@ -529,15 +529,23 @@ export default function Visualizer({ topic }: { topic: Topic }) {
     );
   }
 
-  if (topic.kind === 'stack') {
+  // Strictly bounded to Stack topics & Polish Notations
+  if (topic.kind === 'stack' || topic.category === 'Stack' || topic.section === 'Stack' || topic.id === 'stack' || topic.title === 'Push & Pop' || topic.title === 'Peek' || topic.title === 'Is Empty' || topic.title === 'Is Full') {
     return (
-      <StructureLab
+      <StackLab
         topic={topic}
         values={stack}
         setValues={setStack}
-        mode="stack"
       />
     );
+  }
+
+  if (topic.id === 'postfix' || topic.title === 'Postfix') {
+    return <PostfixEvaluationLab topic={topic} />;
+  }
+
+  if (topic.id === 'prefix' || topic.title === 'Prefix') {
+    return <PrefixEvaluationLab topic={topic} />;
   }
 
   if (topic.kind === 'queue') {
@@ -561,6 +569,71 @@ export default function Visualizer({ topic }: { topic: Topic }) {
 
   if (isGraph) {
     return <GraphLab topic={topic} visited={graphVisited} setVisited={setGraphVisited} />;
+  }
+
+  // Specialized Pattern & Method Labs
+  if (topic.id === 'matrix' || topic.title.includes('Matrix')) {
+    return <MatrixLab topic={topic} />;
+  }
+
+  if (topic.id === 'dynamic-array' || topic.title.includes('Dynamic Array')) {
+    return <DynamicArrayLab topic={topic} />;
+  }
+
+  if (topic.id === 'static-array' || topic.title.includes('Static Array')) {
+    return <StaticArrayLab topic={topic} />;
+  }
+
+  if (topic.id === 'array-adt' || topic.title.includes('Array Data Structure')) {
+    return <ArrayAdtLab topic={topic} />;
+  }
+
+  if (topic.id === 'two-pointers' || topic.title.includes('Two Pointers')) {
+    return <TwoPointersLab topic={topic} />;
+  }
+
+  if (topic.id === 'sliding-window' || topic.title.includes('Sliding Window')) {
+    return <SlidingWindowLab topic={topic} />;
+  }
+
+  if (topic.id === 'prefix-sum' || topic.title.includes('Prefix Sum')) {
+    return <PrefixSumLab topic={topic} />;
+  }
+
+  if (topic.id === 'array-access' || topic.title.includes('Array Access')) {
+    return <ArrayAccessLab topic={topic} />;
+  }
+
+  if (topic.id === 'array-update' || topic.title.includes('Array Update')) {
+    return <ArrayUpdateLab topic={topic} />;
+  }
+
+  if (topic.id === 'array-insert' || topic.title.includes('Array Insert')) {
+    return <ArrayInsertLab topic={topic} />;
+  }
+
+  if (topic.id === 'array-delete' || topic.title.includes('Array Delete')) {
+    return <ArrayDeleteLab topic={topic} />;
+  }
+
+  if (topic.id === 'array-map' || topic.title === 'Map') {
+    return <ArrayMapLab topic={topic} />;
+  }
+
+  if (topic.id === 'array-filter' || topic.title === 'Filter') {
+    return <ArrayFilterLab topic={topic} />;
+  }
+
+  if (topic.id === 'array-reduce' || topic.title === 'Reduce') {
+    return <ArrayReduceLab topic={topic} />;
+  }
+
+  if (topic.id === 'array-slice-splice' || topic.title.includes('Slice & Splice')) {
+    return <ArraySliceSpliceLab topic={topic} />;
+  }
+
+  if (topic.id === 'vector-capacity' || topic.title.includes('Vector Capacity')) {
+    return <DynamicArrayLab topic={topic} />;
   }
 
   return <ConceptLab topic={topic} />;
@@ -659,6 +732,367 @@ function TraceControls({
   );
 }
 
+// ----------------------------------------------------------------------
+// Dedicated Vertical Stack & Polish Notation Labs
+// ----------------------------------------------------------------------
+
+function StackLab({
+  topic,
+  values,
+  setValues,
+}: {
+  topic: Topic;
+  values: number[];
+  setValues: React.Dispatch<React.SetStateAction<number[]>>;
+}) {
+  const [lastAction, setLastAction] = useState('Ready for stack operations (LIFO).');
+  const MAX_CAPACITY = 6;
+
+  const push = () => {
+    if (values.length >= MAX_CAPACITY) {
+      setLastAction(`Stack Overflow! Capacity is ${MAX_CAPACITY}.`);
+      return;
+    }
+    const value = Math.floor(Math.random() * 90) + 10;
+    setValues(current => [...current, value]);
+    setLastAction(`push(${value}) placed ${value} at the top of the stack.`);
+  };
+
+  const pop = () => {
+    if (!values.length) {
+      setLastAction('Stack Underflow! The stack is empty.');
+      return;
+    }
+    const removed = values[values.length - 1];
+    setValues(current => current.slice(0, -1));
+    setLastAction(`pop() removed ${removed} from the top of the stack.`);
+  };
+
+  const peek = () => {
+    if (!values.length) {
+      setLastAction('peek(): Stack is empty (null).');
+      return;
+    }
+    const topVal = values[values.length - 1];
+    setLastAction(`peek(): Top element is ${topVal}.`);
+  };
+
+  const checkEmpty = () => {
+    setLastAction(values.length === 0 ? 'isEmpty(): True, stack has no elements.' : `isEmpty(): False, stack contains ${values.length} item(s).`);
+  };
+
+  const checkFull = () => {
+    setLastAction(values.length >= MAX_CAPACITY ? `isFull(): True, stack reached capacity (${MAX_CAPACITY}).` : `isFull(): False, space available (${values.length}/${MAX_CAPACITY}).`);
+  };
+
+  const displayStack = [...values].reverse();
+
+  return (
+    <div className="visualizer-card">
+      <VisualizerHeader topic={topic} message={lastAction} onReset={() => setValues([42, 18, 73])} />
+
+      <div className="visual-stage" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '340px', padding: '20px' }}>
+        <div className="stage-label" style={{ marginBottom: '10px' }}>VERTICAL STACK (LIFO) — CAPACITY: {values.length}/{MAX_CAPACITY}</div>
+        
+        <div style={{
+          width: '180px',
+          minHeight: '220px',
+          borderLeft: '4px solid var(--border)',
+          borderRight: '4px solid var(--border)',
+          borderBottom: '4px solid var(--border)',
+          borderTop: 'none',
+          borderBottomLeftRadius: '12px',
+          borderBottomRightRadius: '12px',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'flex-start',
+          padding: '10px',
+          gap: '6px',
+          background: 'var(--surface-2)',
+          position: 'relative'
+        }}>
+          {displayStack.map((val, idx) => {
+            const isTop = idx === 0;
+            return (
+              <div
+                key={idx}
+                style={{
+                  width: '150px',
+                  height: '40px',
+                  background: isTop ? 'var(--accent)' : 'var(--surface)',
+                  color: isTop ? '#fff' : 'var(--text)',
+                  border: '1px solid var(--border)',
+                  borderRadius: '8px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontWeight: 700,
+                  fontFamily: "'DM Mono', monospace",
+                  position: 'relative',
+                  boxShadow: isTop ? '0 4px 12px rgba(0,0,0,0.15)' : 'none',
+                }}
+              >
+                <span>{val}</span>
+                {isTop && (
+                  <span style={{
+                    position: 'absolute',
+                    right: '-55px',
+                    fontSize: '11px',
+                    fontWeight: 700,
+                    color: 'var(--accent)',
+                    background: 'var(--accent-soft)',
+                    padding: '2px 6px',
+                    borderRadius: '4px'
+                  }}>
+                    TOP
+                  </span>
+                )}
+              </div>
+            );
+          })}
+          {!values.length && (
+            <div style={{ color: 'var(--muted)', fontStyle: 'italic', marginTop: '70px', fontSize: '13px' }}>
+              Stack is empty
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="operation-bar">
+        <button className="primary-button" onClick={push}><Plus size={15} /> Push</button>
+        <button className="secondary-button" onClick={pop}><Minus size={15} /> Pop</button>
+        <button className="secondary-button" onClick={peek}><Search size={15} /> Peek</button>
+        <button className="secondary-button" onClick={checkEmpty}>Is Empty?</button>
+        <button className="secondary-button" onClick={checkFull}>Is Full?</button>
+      </div>
+    </div>
+  );
+}
+
+function PostfixEvaluationLab({ topic }: { topic: Topic }) {
+  const expression = ['2', '3', '*', '5', '+'];
+  const [stepIdx, setStepIdx] = useState(0);
+  const [stack, setStack] = useState<number[]>([]);
+  const [message, setMessage] = useState('Postfix Evaluation (RPN): Scan left to right. Push operands; on operator, pop two operands, compute, and push result.');
+
+  const runStep = () => {
+    if (stepIdx >= expression.length) {
+      setMessage(`Evaluation complete! Final result = ${stack[0] ?? '—'}`);
+      return;
+    }
+    const token = expression[stepIdx];
+    if (!isNaN(Number(token))) {
+      const num = Number(token);
+      setStack(curr => [...curr, num]);
+      setMessage(`Token '${token}' is an operand. Push ${num} onto stack.`);
+    } else {
+      setStack(curr => {
+        if (curr.length < 2) return curr;
+        const b = curr[curr.length - 1];
+        const a = curr[curr.length - 2];
+        let res = 0;
+        if (token === '+') res = a + b;
+        if (token === '-') res = a - b;
+        if (token === '*') res = a * b;
+        if (token === '/') res = Math.floor(a / b);
+        setMessage(`Token '${token}' is an operator. Pop ${b} and ${a}, compute ${a} ${token} ${b} = ${res}, push ${res}.`);
+        return [...curr.slice(0, -2), res];
+      });
+    }
+    setStepIdx(s => s + 1);
+  };
+
+  const displayStack = [...stack].reverse();
+
+  return (
+    <div className="visualizer-card">
+      <VisualizerHeader topic={topic} message={message} onReset={() => { setStepIdx(0); setStack([]); setMessage('Reset postfix evaluation.'); }} />
+
+      <div className="visual-stage" style={{ minHeight: '340px', padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <div className="stage-label">EXPRESSION TOKENS: {expression.join(' ')} (Token index: {stepIdx})</div>
+        
+        <div style={{ display: 'flex', gap: '8px', margin: '15px 0' }}>
+          {expression.map((tok, i) => (
+            <div key={i} style={{
+              padding: '8px 14px',
+              borderRadius: '8px',
+              border: i === stepIdx ? '2px solid var(--accent)' : '1px solid var(--border)',
+              background: i === stepIdx ? 'var(--accent-soft)' : 'var(--surface-2)',
+              fontWeight: 700,
+              fontFamily: "'DM Mono', monospace"
+            }}>
+              {tok}
+            </div>
+          ))}
+        </div>
+
+        <div className="stage-label" style={{ marginTop: '10px' }}>EVALUATION STACK (VERTICAL LIFO)</div>
+        <div style={{
+          width: '160px',
+          minHeight: '160px',
+          borderLeft: '4px solid var(--border)',
+          borderRight: '4px solid var(--border)',
+          borderBottom: '4px solid var(--border)',
+          borderBottomLeftRadius: '10px',
+          borderBottomRightRadius: '10px',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'flex-start',
+          padding: '8px',
+          gap: '5px',
+          background: 'var(--surface-2)',
+          marginTop: '10px',
+          position: 'relative'
+        }}>
+          {displayStack.map((val, idx) => {
+            const isTop = idx === 0;
+            return (
+              <div key={idx} style={{
+                width: '130px',
+                height: '36px',
+                background: isTop ? 'var(--accent)' : 'var(--surface)',
+                color: isTop ? '#fff' : 'var(--text)',
+                border: '1px solid var(--border)',
+                borderRadius: '6px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontWeight: 700,
+                fontFamily: "'DM Mono', monospace",
+                position: 'relative'
+              }}>
+                <span>{val}</span>
+                {isTop && <span style={{ position: 'absolute', right: '-45px', fontSize: '10px', fontWeight: 700, color: 'var(--accent)' }}>TOP</span>}
+              </div>
+            );
+          })}
+          {!stack.length && <div style={{ color: 'var(--muted)', fontStyle: 'italic', marginTop: '50px', fontSize: '12px' }}>Stack is empty</div>}
+        </div>
+      </div>
+
+      <div className="operation-bar">
+        <button className="primary-button" onClick={runStep}><Play size={15} /> Next Step</button>
+      </div>
+    </div>
+  );
+}
+
+function PrefixEvaluationLab({ topic }: { topic: Topic }) {
+  const expression = ['+', '*', '2', '3', '5'];
+  const [stepIdx, setStepIdx] = useState(0);
+  const [stack, setStack] = useState<number[]>([]);
+  const [message, setMessage] = useState('Prefix Evaluation: Scan right to left. Push operands; on operator, compute and push result.');
+
+  const runStep = () => {
+    const reversedTokens = [...expression].reverse();
+    if (stepIdx >= reversedTokens.length) {
+      setMessage(`Prefix evaluation complete! Final result = ${stack[0] ?? '—'}`);
+      return;
+    }
+    const token = reversedTokens[stepIdx];
+    if (!isNaN(Number(token))) {
+      const num = Number(token);
+      setStack(curr => [...curr, num]);
+      setMessage(`Scan right-to-left: Token '${token}' is an operand. Push ${num} onto stack.`);
+    } else {
+      setStack(curr => {
+        if (curr.length < 2) return curr;
+        const a = curr[curr.length - 1];
+        const b = curr[curr.length - 2];
+        let res = 0;
+        if (token === '+') res = a + b;
+        if (token === '-') res = a - b;
+        if (token === '*') res = a * b;
+        if (token === '/') res = Math.floor(a / b);
+        setMessage(`Scan right-to-left: Operator '${token}'. Pop ${a} and ${b}, compute ${a} ${token} ${b} = ${res}, push ${res}.`);
+        return [...curr.slice(0, -2), res];
+      });
+    }
+    setStepIdx(s => s + 1);
+  };
+
+  const displayStack = [...stack].reverse();
+
+  return (
+    <div className="visualizer-card">
+      <VisualizerHeader topic={topic} message={message} onReset={() => { setStepIdx(0); setStack([]); setMessage('Reset prefix evaluation.'); }} />
+
+      <div className="visual-stage" style={{ minHeight: '340px', padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <div className="stage-label">PREFIX TOKENS: {expression.join(' ')} (Scanning Right-to-Left)</div>
+        
+        <div style={{ display: 'flex', gap: '8px', margin: '15px 0' }}>
+          {expression.map((tok, i) => (
+            <div key={i} style={{
+              padding: '8px 14px',
+              borderRadius: '8px',
+              border: '1px solid var(--border)',
+              background: 'var(--surface-2)',
+              fontWeight: 700,
+              fontFamily: "'DM Mono', monospace"
+            }}>
+              {tok}
+            </div>
+          ))}
+        </div>
+
+        <div className="stage-label" style={{ marginTop: '10px' }}>EVALUATION STACK (VERTICAL LIFO)</div>
+        <div style={{
+          width: '160px',
+          minHeight: '160px',
+          borderLeft: '4px solid var(--border)',
+          borderRight: '4px solid var(--border)',
+          borderBottom: '4px solid var(--border)',
+          borderBottomLeftRadius: '10px',
+          borderBottomRightRadius: '10px',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'flex-start',
+          padding: '8px',
+          gap: '5px',
+          background: 'var(--surface-2)',
+          marginTop: '10px',
+          position: 'relative'
+        }}>
+          {displayStack.map((val, idx) => {
+            const isTop = idx === 0;
+            return (
+              <div key={idx} style={{
+                width: '130px',
+                height: '36px',
+                background: isTop ? 'var(--accent)' : 'var(--surface)',
+                color: isTop ? '#fff' : 'var(--text)',
+                border: '1px solid var(--border)',
+                borderRadius: '6px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontWeight: 700,
+                fontFamily: "'DM Mono', monospace",
+                position: 'relative'
+              }}>
+                <span>{val}</span>
+                {isTop && <span style={{ position: 'absolute', right: '-45px', fontSize: '10px', fontWeight: 700, color: 'var(--accent)' }}>TOP</span>}
+              </div>
+            );
+          })}
+          {!stack.length && <div style={{ color: 'var(--muted)', fontStyle: 'italic', marginTop: '50px', fontSize: '12px' }}>Stack is empty</div>}
+        </div>
+      </div>
+
+      <div className="operation-bar">
+        <button className="primary-button" onClick={runStep}><Play size={15} /> Next Step (Right-to-Left)</button>
+      </div>
+    </div>
+  );
+}
+
+// ----------------------------------------------------------------------
+// Original StructureLab (for Queues), ListLab, TreeLab, GraphLab, etc.
+// ----------------------------------------------------------------------
+
 function StructureLab({
   topic,
   values,
@@ -668,58 +1102,37 @@ function StructureLab({
   topic: Topic;
   values: number[];
   setValues: React.Dispatch<React.SetStateAction<number[]>>;
-  mode: 'stack' | 'queue';
+  mode: 'queue';
 }) {
-  const [lastAction, setLastAction] = useState('Ready for an operation.');
+  const [lastAction, setLastAction] = useState('Ready for queue operations (FIFO).');
 
   const add = () => {
     const value = Math.floor(Math.random() * 90) + 10;
     setValues(current => [...current, value]);
-    setLastAction(
-      mode === 'stack'
-        ? `push(${value}) puts ${value} on the top.`
-        : `enqueue(${value}) puts ${value} at the rear.`,
-    );
+    setLastAction(`enqueue(${value}) puts ${value} at the rear.`);
   };
 
   const remove = () => {
     if (!values.length) {
-      setLastAction(`Cannot remove: the ${mode} is empty.`);
+      setLastAction('Queue is empty.');
       return;
     }
-
-    const removed = mode === 'stack' ? values[values.length - 1] : values[0];
-    setValues(current => (mode === 'stack' ? current.slice(0, -1) : current.slice(1)));
-    setLastAction(
-      mode === 'stack'
-        ? `pop() removes ${removed} from the top.`
-        : `dequeue() removes ${removed} from the front.`,
-    );
+    const removed = values[0];
+    setValues(current => current.slice(1));
+    setLastAction(`dequeue() removes ${removed} from the front.`);
   };
-
-  const peek = mode === 'stack' ? values[values.length - 1] : values[0];
 
   return (
     <div className="visualizer-card">
       <VisualizerHeader topic={topic} message={lastAction} onReset={() => setValues([])} />
 
-      <div className={`structure-stage ${mode}`}>
-        <div className="stage-label">{mode === 'stack' ? 'TOP →' : 'FRONT →'}</div>
+      <div className={`structure-stage queue`}>
+        <div className="stage-label">FRONT → REAR</div>
         <div className="structure-visual">
           {values.map((value, index) => (
             <div className="structure-cell" key={`${value}-${index}`}>
               <strong>{value}</strong>
-              <span>
-                {mode === 'stack'
-                  ? index === values.length - 1
-                    ? 'top'
-                    : ''
-                  : index === 0
-                    ? 'front'
-                    : index === values.length - 1
-                      ? 'rear'
-                      : ''}
-              </span>
+              <span>{index === 0 ? 'front' : index === values.length - 1 ? 'rear' : ''}</span>
             </div>
           ))}
           {!values.length && <div className="empty-structure">null</div>}
@@ -727,18 +1140,8 @@ function StructureLab({
       </div>
 
       <div className="operation-bar">
-        <button className="primary-button" onClick={add}>
-          <Plus size={15} /> {mode === 'stack' ? 'Push' : 'Enqueue'}
-        </button>
-        <button className="secondary-button" onClick={remove}>
-          <Minus size={15} /> {mode === 'stack' ? 'Pop' : 'Dequeue'}
-        </button>
-        <button className="secondary-button" onClick={() => setLastAction(`${mode === 'stack' ? 'peek()' : 'front()'} = ${peek ?? 'null'}.`)}>
-          <Search size={15} /> Peek
-        </button>
-        <button className="secondary-button" onClick={() => setLastAction(values.length ? 'The structure is not empty.' : 'The structure is empty.')}>
-          Is Empty?
-        </button>
+        <button className="primary-button" onClick={add}><Plus size={15} /> Enqueue</button>
+        <button className="secondary-button" onClick={remove}><Minus size={15} /> Dequeue</button>
       </div>
     </div>
   );
@@ -1013,6 +1416,566 @@ function GraphLab({
           <span>Visited</span>
           <strong>{visited.length ? visited.join(' → ') : '—'}</strong>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function MatrixLab({ topic }: { topic: Topic }) {
+  const [matrix, setMatrix] = useState([
+    [12, 45, 78],
+    [34, 56, 90],
+    [23, 67, 89],
+  ]);
+  const [activeCell, setActiveCell] = useState<[number, number] | null>([0, 0]);
+  const [message, setMessage] = useState('Click any cell in the 2D grid to inspect its row [r] and column [c]. O(1) direct access.');
+
+  const randomize = () => {
+    setMatrix(
+      Array.from({ length: 3 }, () =>
+        Array.from({ length: 3 }, () => Math.floor(Math.random() * 90) + 10)
+      )
+    );
+    setActiveCell([0, 0]);
+    setMessage('Randomized 3x3 matrix values.');
+  };
+
+  return (
+    <div className="visualizer-card">
+      <VisualizerHeader topic={topic} message={message} onReset={randomize} />
+
+      <div className="visual-stage" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '300px' }}>
+        <div className="stage-label">2D MATRIX GRID (3 × 3)</div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 85px)', gap: '10px', marginTop: '20px' }}>
+          {matrix.map((row, r) =>
+            row.map((val, c) => {
+              const isActive = activeCell && activeCell[0] === r && activeCell[1] === c;
+              return (
+                <button
+                  key={`${r}-${c}`}
+                  onClick={() => {
+                    setActiveCell([r, c]);
+                    setMessage(`Cell matrix[${r}][${c}] contains ${val}. Access time is O(1).`);
+                  }}
+                  style={{
+                    height: '65px',
+                    borderRadius: '10px',
+                    border: isActive ? '2px solid var(--accent)' : '1px solid var(--border)',
+                    background: isActive ? 'var(--accent-soft)' : 'var(--surface-2)',
+                    color: 'var(--text)',
+                    fontFamily: "'DM Mono', monospace",
+                    fontSize: '16px',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '3px',
+                  }}
+                >
+                  <span>{val}</span>
+                  <span style={{ fontSize: '9px', color: 'var(--muted-2)' }}>[{r}][{c}]</span>
+                </button>
+              );
+            })
+          )}
+        </div>
+      </div>
+
+      <div className="operation-bar">
+        <button className="primary-button" onClick={randomize}>
+          <Shuffle size={15} /> Randomize Matrix
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function DynamicArrayLab({ topic }: { topic: Topic }) {
+  const [data, setData] = useState([10, 25, 42]);
+  const [capacity, setCapacity] = useState(4);
+  const [message, setMessage] = useState('Dynamic arrays double their backing capacity when size reaches capacity.');
+
+  const push = () => {
+    const val = Math.floor(Math.random() * 90) + 10;
+    if (data.length >= capacity) {
+      const newCap = capacity * 2;
+      setData(curr => [...curr, val]);
+      setCapacity(newCap);
+      setMessage(`Capacity reached! Resized & doubled capacity to ${newCap}. Added ${val}.`);
+    } else {
+      setData(curr => [...curr, val]);
+      setMessage(`Added ${val} in O(1) amortized time. Size: ${data.length + 1} / Capacity: ${capacity}`);
+    }
+  };
+
+  const pop = () => {
+    if (!data.length) return;
+    setData(curr => curr.slice(0, -1));
+    setMessage(`Removed last item. Size: ${data.length - 1} / Capacity: ${capacity}`);
+  };
+
+  return (
+    <div className="visualizer-card">
+      <VisualizerHeader topic={topic} message={message} onReset={() => { setData([10, 25, 42]); setCapacity(4); }} />
+
+      <div className="visual-stage" style={{ minHeight: '300px', padding: '50px 20px 30px' }}>
+        <div className="stage-label">DYNAMIC ARRAY / VECTOR (SIZE: {data.length} | CAPACITY: {capacity})</div>
+        <div className="array-visual" style={{ marginTop: '20px' }}>
+          {Array.from({ length: capacity }, (_, i) => {
+            const val = data[i];
+            const hasVal = val !== undefined;
+            return (
+              <div className="array-slot" key={i}>
+                <div className={`array-value ${hasVal ? 'active' : ''}`} style={{ opacity: hasVal ? 1 : 0.4, borderStyle: hasVal ? 'solid' : 'dashed' }}>
+                  {hasVal ? val : 'ø'}
+                </div>
+                <span className="array-index">{i}</span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className="operation-bar">
+        <button className="primary-button" onClick={push}><Plus size={15} /> Append</button>
+        <button className="secondary-button" onClick={pop}><Minus size={15} /> Pop</button>
+      </div>
+    </div>
+  );
+}
+
+function StaticArrayLab({ topic }: { topic: Topic }) {
+  const CAPACITY = 6;
+  const [data, setData] = useState([12, 34, 56, 78]);
+  const [message, setMessage] = useState('Static arrays have a fixed capacity and cannot grow automatically.');
+
+  return (
+    <div className="visualizer-card">
+      <VisualizerHeader topic={topic} message={message} onReset={() => setData([12, 34, 56, 78])} />
+
+      <div className="visual-stage" style={{ minHeight: '300px', padding: '50px 20px 30px' }}>
+        <div className="stage-label">STATIC ARRAY (FIXED CAPACITY = {CAPACITY})</div>
+        <div className="array-visual" style={{ marginTop: '20px' }}>
+          {Array.from({ length: CAPACITY }, (_, i) => {
+            const val = data[i];
+            const hasVal = val !== undefined;
+            return (
+              <div className="array-slot" key={i}>
+                <div className={`array-value ${hasVal ? 'active' : ''}`} style={{ opacity: hasVal ? 1 : 0.4 }}>
+                  {hasVal ? val : 'null'}
+                </div>
+                <span className="array-index">idx {i}</span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className="operation-bar">
+        <button className="primary-button" onClick={() => {
+          if (data.length < CAPACITY) setData(curr => [...curr, Math.floor(Math.random() * 90) + 10]);
+          else setMessage('Array is full.');
+        }}><Plus size={15} /> Set Item</button>
+        <button className="secondary-button" onClick={() => setData(curr => curr.slice(0, -1))}><Trash2 size={15} /> Clear Last</button>
+      </div>
+    </div>
+  );
+}
+
+function ArrayAdtLab({ topic }: { topic: Topic }) {
+  const [data, setData] = useState([21, 43, 65, 87, 99]);
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(2);
+  const [message, setMessage] = useState('Contiguous memory allows O(1) random access.');
+
+  return (
+    <div className="visualizer-card">
+      <VisualizerHeader topic={topic} message={message} onReset={() => setData([21, 43, 65, 87, 99])} />
+
+      <div className="visual-stage" style={{ minHeight: '300px', padding: '50px 20px 30px' }}>
+        <div className="stage-label">ARRAY DATA STRUCTURE</div>
+        <div className="array-visual" style={{ marginTop: '20px' }}>
+          {data.map((val, i) => (
+            <div className="array-slot" key={i}>
+              <div className={`array-value ${selectedIndex === i ? 'active' : ''}`} onClick={() => { setSelectedIndex(i); setMessage(`Accessed index ${i}: value is ${val}. O(1) time.`); }} style={{ cursor: 'pointer' }}>
+                {val}
+              </div>
+              <span className="array-index">[{i}]</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function TwoPointersLab({ topic }: { topic: Topic }) {
+  const [left, setLeft] = useState(0);
+  const [right, setRight] = useState(6);
+  const values = [2, 5, 8, 12, 16, 23, 38];
+  const target = 30;
+  const sum = values[left] + values[right];
+
+  const stepForward = () => {
+    if (sum === target) {
+      setMessage(`Found pair! ${values[left]} + ${values[right]} = ${target}`);
+    } else if (sum < target) {
+      if (left < right) setLeft(l => l + 1);
+      setMessage(`Sum ${sum} < target ${target}, move left pointer right.`);
+    } else {
+      if (right > left) setRight(r => r - 1);
+      setMessage(`Sum ${sum} > target ${target}, move right pointer left.`);
+    }
+  };
+
+  const [message, setMessage] = useState('Two Pointers pattern: use left and right indices moving inward in O(n) time.');
+
+  return (
+    <div className="visualizer-card">
+      <VisualizerHeader topic={topic} message={message} onReset={() => { setLeft(0); setRight(6); setMessage('Reset pointers.'); }} />
+
+      <div className="visual-stage" style={{ minHeight: '300px', padding: '50px 20px 30px' }}>
+        <div className="stage-label">TWO POINTERS (TARGET SUM = {target})</div>
+        <div className="array-visual" style={{ marginTop: '20px' }}>
+          {values.map((val, i) => (
+            <div className="array-slot" key={i}>
+              <div className={`array-value ${i === left || i === right ? 'active' : ''}`}>
+                {val}
+              </div>
+              <span className="array-index">[{i}]</span>
+              {i === left && <b className="array-pointer">left</b>}
+              {i === right && <b className="array-pointer second">right</b>}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="operation-bar">
+        <button className="primary-button" onClick={stepForward}>
+          <Play size={15} /> Step Pointers
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function SlidingWindowLab({ topic }: { topic: Topic }) {
+  const [windowStart, setWindowStart] = useState(0);
+  const windowSize = 3;
+  const values = [4, 2, 7, 1, 9, 3, 5];
+  const currentWindow = values.slice(windowStart, windowStart + windowSize);
+  const windowSum = currentWindow.reduce((a, b) => a + b, 0);
+  const [message, setMessage] = useState(`Sliding Window of size ${windowSize}. Current window sum: ${windowSum}`);
+
+  return (
+    <div className="visualizer-card">
+      <VisualizerHeader topic={topic} message={message} onReset={() => setWindowStart(0)} />
+
+      <div className="visual-stage" style={{ minHeight: '300px', padding: '50px 20px 30px' }}>
+        <div className="stage-label">SLIDING WINDOW (K = {windowSize})</div>
+        <div className="array-visual" style={{ marginTop: '20px' }}>
+          {values.map((val, i) => {
+            const inWindow = i >= windowStart && i < windowStart + windowSize;
+            return (
+              <div className="array-slot" key={i}>
+                <div className={`array-value ${inWindow ? 'active' : ''}`}>
+                  {val}
+                </div>
+                <span className="array-index">[{i}]</span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className="operation-bar">
+        <button className="primary-button" onClick={() => {
+          if (windowStart < values.length - windowSize) {
+            const next = windowStart + 1;
+            setWindowStart(next);
+            const nextSum = values.slice(next, next + windowSize).reduce((a, b) => a + b, 0);
+            setMessage(`Slide window right to index ${next}. New sum: ${nextSum}`);
+          } else {
+            setWindowStart(0);
+            setMessage('Window reset to start.');
+          }
+        }}>
+          Slide Window Right
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function PrefixSumLab({ topic }: { topic: Topic }) {
+  const values = [3, 1, 4, 1, 5, 9];
+  const prefix = values.reduce((acc: number[], val, idx) => {
+    acc.push((acc[idx - 1] ?? 0) + val);
+    return acc;
+  }, []);
+  const [message, setMessage] = useState('Prefix Sum array precomputes cumulative totals for O(1) range queries.');
+
+  return (
+    <div className="visualizer-card">
+      <VisualizerHeader topic={topic} message={message} onReset={() => {}} />
+
+      <div className="visual-stage" style={{ minHeight: '300px', padding: '40px 20px 30px' }}>
+        <div className="stage-label">ORIGINAL ARRAY VS PREFIX SUM ARRAY</div>
+        <div style={{ marginBottom: '10px', fontSize: '11px', color: 'var(--muted)' }}>Original: {values.join(', ')}</div>
+        <div className="array-visual">
+          {prefix.map((val, i) => (
+            <div className="array-slot" key={i}>
+              <div className="array-value active">{val}</div>
+              <span className="array-index">pre[{i}]</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ArrayAccessLab({ topic }: { topic: Topic }) {
+  const values = [15, 28, 43, 56, 79];
+  const [idx, setIdx] = useState(2);
+  const [message, setMessage] = useState('Array Access: BaseAddress + (index × element_size) = O(1).');
+
+  return (
+    <div className="visualizer-card">
+      <VisualizerHeader topic={topic} message={message} onReset={() => setIdx(2)} />
+
+      <div className="visual-stage" style={{ minHeight: '300px', padding: '50px 20px 30px' }}>
+        <div className="stage-label">CONSTANT TIME INDEX ACCESS O(1)</div>
+        <div className="array-visual" style={{ marginTop: '20px' }}>
+          {values.map((val, i) => (
+            <div className="array-slot" key={i} onClick={() => { setIdx(i); setMessage(`Accessed index ${i}: Value ${val} computed instantly.`); }} style={{ cursor: 'pointer' }}>
+              <div className={`array-value ${idx === i ? 'active' : ''}`}>{val}</div>
+              <span className="array-index">[{i}]</span>
+              {idx === i && <b className="array-pointer">O(1)</b>}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ArrayUpdateLab({ topic }: { topic: Topic }) {
+  const [values, setValues] = useState([10, 20, 30, 40]);
+  const [message, setMessage] = useState('Array Update: Directly overwrite the value at a known index in O(1).');
+
+  return (
+    <div className="visualizer-card">
+      <VisualizerHeader topic={topic} message={message} onReset={() => setValues([10, 20, 30, 40])} />
+
+      <div className="visual-stage" style={{ minHeight: '300px', padding: '50px 20px 30px' }}>
+        <div className="stage-label">UPDATE VALUE AT INDEX</div>
+        <div className="array-visual" style={{ marginTop: '20px' }}>
+          {values.map((val, i) => (
+            <div className="array-slot" key={i} onClick={() => {
+              const updated = [...values];
+              updated[i] += 5;
+              setValues(updated);
+              setMessage(`Updated index [${i}] to ${updated[i]}. Direct write is O(1).`);
+            }} style={{ cursor: 'pointer' }}>
+              <div className="array-value active">{val}</div>
+              <span className="array-index">[{i}]</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ArrayInsertLab({ topic }: { topic: Topic }) {
+  const [values, setValues] = useState([11, 22, 44, 55]);
+  const [message, setMessage] = useState('Array Insert: Inserting in the middle requires shifting elements to the right O(n).');
+
+  return (
+    <div className="visualizer-card">
+      <VisualizerHeader topic={topic} message={message} onReset={() => setValues([11, 22, 44, 55])} />
+
+      <div className="visual-stage" style={{ minHeight: '300px', padding: '50px 20px 30px' }}>
+        <div className="stage-label">INSERTION WITH SHIFTING</div>
+        <div className="array-visual" style={{ marginTop: '20px' }}>
+          {values.map((val, i) => (
+            <div className="array-slot" key={i}>
+              <div className="array-value active">{val}</div>
+              <span className="array-index">[{i}]</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="operation-bar">
+        <button className="primary-button" onClick={() => {
+          const copy = [...values];
+          copy.splice(2, 0, 33);
+          setValues(copy);
+          setMessage('Inserted 33 at index 2. Elements [2..end] shifted right (O(n)).');
+        }}>
+          Insert 33 at Index 2
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function ArrayDeleteLab({ topic }: { topic: Topic }) {
+  const [values, setValues] = useState([10, 20, 30, 40, 50]);
+  const [message, setMessage] = useState('Array Delete: Removing an item requires shifting subsequent elements left O(n).');
+
+  return (
+    <div className="visualizer-card">
+      <VisualizerHeader topic={topic} message={message} onReset={() => setValues([10, 20, 30, 40, 50])} />
+
+      <div className="visual-stage" style={{ minHeight: '300px', padding: '50px 20px 30px' }}>
+        <div className="stage-label">DELETION WITH SHIFTING</div>
+        <div className="array-visual" style={{ marginTop: '20px' }}>
+          {values.map((val, i) => (
+            <div className="array-slot" key={i}>
+              <div className="array-value active">{val}</div>
+              <span className="array-index">[{i}]</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="operation-bar">
+        <button className="primary-button" onClick={() => {
+          const copy = [...values];
+          copy.splice(1, 1);
+          setValues(copy);
+          setMessage('Deleted item at index 1. Subsequent items shifted left (O(n)).');
+        }}>
+          Delete Index 1
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function ArrayMapLab({ topic }: { topic: Topic }) {
+  const [values, setValues] = useState([1, 2, 3, 4]);
+  const [message, setMessage] = useState('Map: Transform every element in O(n) time.');
+
+  return (
+    <div className="visualizer-card">
+      <VisualizerHeader topic={topic} message={message} onReset={() => setValues([1, 2, 3, 4])} />
+
+      <div className="visual-stage" style={{ minHeight: '300px', padding: '50px 20px 30px' }}>
+        <div className="stage-label">MAP TRANSFORMATION (x × 2)</div>
+        <div className="array-visual" style={{ marginTop: '20px' }}>
+          {values.map((val, i) => (
+            <div className="array-slot" key={i}>
+              <div className="array-value active">{val}</div>
+              <span className="array-index">[{i}]</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="operation-bar">
+        <button className="primary-button" onClick={() => {
+          setValues(curr => curr.map(x => x * 2));
+          setMessage('Applied map(x => x * 2) across all elements.');
+        }}>
+          Multiply by 2 (Map)
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function ArrayFilterLab({ topic }: { topic: Topic }) {
+  const [values, setValues] = useState([3, 8, 12, 5, 16, 7]);
+  const [message, setMessage] = useState('Filter: Keep only elements that satisfy a boolean predicate.');
+
+  return (
+    <div className="visualizer-card">
+      <VisualizerHeader topic={topic} message={message} onReset={() => setValues([3, 8, 12, 5, 16, 7])} />
+
+      <div className="visual-stage" style={{ minHeight: '300px', padding: '50px 20px 30px' }}>
+        <div className="stage-label">FILTER PREDICATE (x &gt; 6)</div>
+        <div className="array-visual" style={{ marginTop: '20px' }}>
+          {values.map((val, i) => (
+            <div className="array-slot" key={i}>
+              <div className={`array-value ${val > 6 ? 'active' : ''}`} style={{ opacity: val > 6 ? 1 : 0.4 }}>
+                {val}
+              </div>
+              <span className="array-index">[{i}]</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="operation-bar">
+        <button className="primary-button" onClick={() => {
+          setValues(curr => curr.filter(x => x > 6));
+          setMessage('Filtered out elements ≤ 6.');
+        }}>
+          Filter (x &gt; 6)
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function ArrayReduceLab({ topic }: { topic: Topic }) {
+  const values = [5, 10, 15, 20];
+  const sum = values.reduce((a, b) => a + b, 0);
+  const [message, setMessage] = useState(`Reduce: Accumulates array values into a single result. Total sum = ${sum}`);
+
+  return (
+    <div className="visualizer-card">
+      <VisualizerHeader topic={topic} message={message} onReset={() => {}} />
+
+      <div className="visual-stage" style={{ minHeight: '300px', padding: '50px 20px 30px' }}>
+        <div className="stage-label">ACCUMULATE / REDUCE</div>
+        <div className="array-visual" style={{ marginTop: '20px' }}>
+          {values.map((val, i) => (
+            <div className="array-slot" key={i}>
+              <div className="array-value active">{val}</div>
+              <span className="array-index">[{i}]</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ArraySliceSpliceLab({ topic }: { topic: Topic }) {
+  const [values, setValues] = useState([10, 20, 30, 40, 50]);
+  const [message, setMessage] = useState('Slice extracts a portion without mutation; Splice mutates by removing/replacing.');
+
+  return (
+    <div className="visualizer-card">
+      <VisualizerHeader topic={topic} message={message} onReset={() => setValues([10, 20, 30, 40, 50])} />
+
+      <div className="visual-stage" style={{ minHeight: '300px', padding: '50px 20px 30px' }}>
+        <div className="stage-label">SLICE & SPLICE OPERATIONS</div>
+        <div className="array-visual" style={{ marginTop: '20px' }}>
+          {values.map((val, i) => (
+            <div className="array-slot" key={i}>
+              <div className="array-value active">{val}</div>
+              <span className="array-index">[{i}]</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="operation-bar">
+        <button className="primary-button" onClick={() => {
+          const copy = [...values];
+          copy.splice(1, 2);
+          setValues(copy);
+          setMessage('Splice(1, 2): removed 2 items starting at index 1 (mutated).');
+        }}>
+          Splice(1, 2)
+        </button>
       </div>
     </div>
   );
